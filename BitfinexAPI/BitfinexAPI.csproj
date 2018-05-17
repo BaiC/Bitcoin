@@ -44,6 +44,7 @@
     <Compile Include="AccessRestApi.cs" />
     <Compile Include="AccessWebSocket.cs" />
     <Compile Include="BitfinexMethod.cs" />
+    <Compile Include="Converters.cs" />
     <Compile Include="DataCommon.cs" />
     <Compile Include="DataContract.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

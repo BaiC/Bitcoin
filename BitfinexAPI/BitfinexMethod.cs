@@ -40,14 +40,14 @@ namespace BitfinexAPI
             return await ProcessPublic<List<string>>("/v1/symbols");
         }
 
-        public async Task<List<TradeInfo>> GetTrades(string symbol)
+        public async Task<List<TransactionInfo>> GetTrades(string symbol)
         {
-            return await ProcessPublic<List<TradeInfo>>("/v1/trades/" + symbol);
+            return await ProcessPublic<List<TransactionInfo>>("/v1/trades/" + symbol.ToLower());
         }
 
         public async Task<OrderBookInfo> GetOrderBook(string symbol)
         {
-            return await ProcessPublic<OrderBookInfo>("/v1/book/" + symbol);
+            return await ProcessPublic<OrderBookInfo>("/v1/book/" + symbol.ToLower());
         }
 
         public async Task<List<BalanceInfo>> GetBalances()
@@ -98,7 +98,7 @@ namespace BitfinexAPI
         {
             var args = GeneratePayload("/v1/order/new");
             args.Add("exchange", "bitfinex");
-            args.Add("symbol", symbol);
+            args.Add("symbol", symbol.ToUpper());
             args.Add("amount", amount.ToString());
             args.Add("price", price.ToString());
             args.Add("side", ConvertHelper.ObtainEnumValue(side));
@@ -119,6 +119,45 @@ namespace BitfinexAPI
             args.Add("position_id", id);
 
             return await ProcessAuthenticated<BaseInfo>(args);
+        }
+
+        public async Task<List<KlineInfo>> GetHistoryKlines(
+            string symbol,
+            KlineInterval interval,
+            DateTime start,
+            DateTime end,
+            int limit = 800)
+        {
+            long s = new DateTimeOffset(start).ToUnixTimeMilliseconds();
+            long e = new DateTimeOffset(end).ToUnixTimeMilliseconds();
+
+            string path = "/v2/candles/trade:"
+                + ConvertHelper.ObtainEnumValue(interval)
+                + ":t" + symbol.ToUpper()
+                + "/hist?limit=" + limit.ToString()
+                + "&start=" + s.ToString()
+                + "&end=" + e.ToString()
+                + "&sort=1";
+
+            return await ProcessPublic<List<KlineInfo>>(path);
+        }
+
+        public async Task<List<TradeInfo>> GetHistoryTrades(
+            string symbol,
+            DateTime start,
+            DateTime end,
+            int limit = 800)
+        {
+            long s = new DateTimeOffset(start).ToUnixTimeMilliseconds();
+            long e = new DateTimeOffset(end).ToUnixTimeMilliseconds();
+
+            string path = "/v2/trades/t" + symbol.ToUpper()
+                + "/hist?limit=" + limit.ToString()
+                + "&start=" + s.ToString()
+                + "&end=" + e.ToString()
+                + "&sort=1";
+
+            return await ProcessPublic<List<TradeInfo>>(path);
         }
     }
 }

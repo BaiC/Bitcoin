@@ -6,42 +6,15 @@ using Newtonsoft.Json.Converters;
 
 namespace BitfinexAPI
 {
-    static class ConvertHelper
-    {
-        public static string ObtainEnumValue<T>(T data)
-        {
-            var info = JsonConvert.SerializeObject(data, new StringEnumConverter());
-            return JsonConvert.DeserializeObject<string>(info);
-        }
-    }
-
-    class TimeConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            return DateTimeOffset.FromUnixTimeSeconds((long)decimal.Parse(reader.Value.ToString())).DateTime;
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteValue(new DateTimeOffset((DateTime)value).ToUnixTimeSeconds());
-        }
-    }
-
     public class BaseInfo : Dictionary<string, object>
     {
     }
 
-    public class TradeInfo
+    public class TransactionInfo
     {
         public decimal price;
         public decimal amount;
-        [JsonConverter(typeof(TimeConverter))]
+        [JsonConverter(typeof(V1TimeConverter))]
         public DateTime timestamp;
         [JsonConverter(typeof(StringEnumConverter))]
         public OrderSide type;
@@ -53,7 +26,7 @@ namespace BitfinexAPI
     {
         public decimal price;
         public decimal amount;
-        [JsonConverter(typeof(TimeConverter))]
+        [JsonConverter(typeof(V1TimeConverter))]
         public DateTime timestamp;
     }
 
@@ -80,7 +53,7 @@ namespace BitfinexAPI
         [JsonProperty("base")]
         public decimal base_price;
         public decimal amount;
-        [JsonConverter(typeof(TimeConverter))]
+        [JsonConverter(typeof(V1TimeConverter))]
         public DateTime timestamp;
         public decimal swap;
         public decimal pl;
@@ -97,7 +70,7 @@ namespace BitfinexAPI
         public OrderSide side;
         [JsonConverter(typeof(StringEnumConverter))]
         public OrderType type;
-        [JsonConverter(typeof(TimeConverter))]
+        [JsonConverter(typeof(V1TimeConverter))]
         public DateTime timestamp;
         public bool is_live;
         public bool is_cancelled;
@@ -106,5 +79,25 @@ namespace BitfinexAPI
         public decimal original_amount;
         public decimal remaining_amount;
         public decimal executed_amount;
+    }
+
+    [JsonConverter(typeof(KlineConverter))]
+    public class KlineInfo
+    {
+        public DateTime timestamp;
+        public decimal open;
+        public decimal close;
+        public decimal high;
+        public decimal low;
+        public decimal volume;
+    }
+
+    [JsonConverter(typeof(TradeConverter))]
+    public class TradeInfo
+    {
+        public long id;
+        public DateTime timestamp;
+        public decimal price;
+        public decimal amount;
     }
 }
