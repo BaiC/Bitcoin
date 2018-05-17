@@ -288,3 +288,4 @@ __pycache__/
 *.xsd.cs
 /Portal/App.config
 /Test/App.config
+/DataStorage/App.config

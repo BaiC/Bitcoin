@@ -69,9 +69,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\BitfinexAPI\BitfinexAPI.csproj">
       <Project>{9eb53ec3-ef0a-4e79-b0c8-b8f0cb3f781e}</Project>
       <Name>BitfinexAPI</Name>

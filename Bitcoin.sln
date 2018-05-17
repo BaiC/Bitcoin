@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinanceAPI", "BinanceAPI\BinanceAPI.csproj", "{68327CA6-01E6-492B-B45C-927CA62632A8}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal", "Portal\Portal.csproj", "{2D17D8DE-64EB-4EF3-9655-10134F862484}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitfinexAPI", "BitfinexAPI\BitfinexAPI.csproj", "{9EB53EC3-EF0A-4E79-B0C8-B8F0CB3F781E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStorage", "DataStorage\DataStorage.csproj", "{6CC98B0B-F7EE-4CC4-9F98-249EF57E3E29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{9EB53EC3-EF0A-4E79-B0C8-B8F0CB3F781E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EB53EC3-EF0A-4E79-B0C8-B8F0CB3F781E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EB53EC3-EF0A-4E79-B0C8-B8F0CB3F781E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CC98B0B-F7EE-4CC4-9F98-249EF57E3E29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CC98B0B-F7EE-4CC4-9F98-249EF57E3E29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CC98B0B-F7EE-4CC4-9F98-249EF57E3E29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CC98B0B-F7EE-4CC4-9F98-249EF57E3E29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
