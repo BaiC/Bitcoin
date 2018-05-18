@@ -84,12 +84,12 @@ namespace BitfinexAPI
     [JsonConverter(typeof(KlineConverter))]
     public class KlineInfo
     {
-        public DateTime timestamp;
-        public decimal open;
-        public decimal close;
-        public decimal high;
-        public decimal low;
-        public decimal volume;
+        public DateTime timestamp { get; set; }
+        public decimal open { get; set; }
+        public decimal close { get; set; }
+        public decimal high { get; set; }
+        public decimal low { get; set; }
+        public decimal volume { get; set; }
     }
 
     [JsonConverter(typeof(TradeConverter))]

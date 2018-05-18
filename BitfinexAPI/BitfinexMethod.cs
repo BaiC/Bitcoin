@@ -9,6 +9,11 @@ namespace BitfinexAPI
         string _apiKey;
         string _secretKey;
 
+        public BitfinexMethod()
+        {
+
+        }
+
         public BitfinexMethod(string apiKey, string secretKey)
         {
             _apiKey = apiKey;
