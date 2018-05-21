@@ -25,28 +25,84 @@ namespace DataStorage
         }
 
         private static async Task Run()
-        {           
+        {
             var intervals = Enum.GetValues(typeof(KlineInterval));
-            var symbols = new string[] { "btcusd", "ltcusd", "ltcbtc", "ethusd", "ethbtc", "etcbtc", "etcusd", "rrtusd", "rrtbtc", "zecusd", "zecbtc", "xmrusd", "xmrbtc", "dshusd", "dshbtc", "btceur", "btcjpy", "xrpusd", "xrpbtc", "iotusd", "iotbtc", "ioteth", "eosusd", "eosbtc", "eoseth", "sanusd", "sanbtc", "saneth", "omgusd", "omgbtc", "omgeth", "bchusd", "bchbtc", "bcheth", "neousd", "neobtc", "neoeth", "etpusd", "etpbtc", "etpeth", "qtmusd", "qtmbtc", "qtmeth", "avtusd", "avtbtc", "avteth", "edousd", "edobtc", "edoeth", "btgusd", "btgbtc", "datusd", "datbtc", "dateth", "qshusd", "qshbtc", "qsheth", "yywusd", "yywbtc", "yyweth", "gntusd", "gntbtc", "gnteth", "sntusd", "sntbtc", "snteth", "ioteur", "batusd", "batbtc", "bateth", "mnausd", "mnabtc", "mnaeth", "funusd", "funbtc", "funeth", "zrxusd", "zrxbtc", "zrxeth", "tnbusd", "tnbbtc", "tnbeth", "spkusd", "spkbtc", "spketh", "trxusd", "trxbtc", "trxeth", "rcnusd", "rcnbtc", "rcneth", "rlcusd", "rlcbtc", "rlceth", "aidusd", "aidbtc", "aideth", "sngusd", "sngbtc", "sngeth", "repusd", "repbtc", "repeth", "elfusd", "elfbtc", "elfeth", "btcgbp", "etheur", "ethjpy", "ethgbp", "neoeur", "neojpy", "neogbp", "eoseur", "eosjpy", "eosgbp", "iotjpy", "iotgbp", "iosusd", "iosbtc", "ioseth", "aiousd", "aiobtc", "aioeth", "requsd", "reqbtc", "reqeth", "rdnusd", "rdnbtc", "rdneth", "lrcusd", "lrcbtc", "lrceth", "waxusd", "waxbtc", "waxeth", "daiusd", "daibtc", "daieth", "cfiusd", "cfibtc", "cfieth", "agiusd", "agibtc", "agieth", "bftusd", "bftbtc", "bfteth", "mtnusd", "mtnbtc", "mtneth", "odeusd", "odebtc", "odeeth", "antusd", "antbtc", "anteth", "dthusd", "dthbtc", "dtheth", "mitusd", "mitbtc", "miteth", "stjusd", "stjbtc", "stjeth", "xlmusd", "xlmeur", "xlmjpy", "xlmgbp", "xlmbtc", "xlmeth", "xvgusd", "xvgeur", "xvgjpy", "xvggbp", "xvgbtc", "xvgeth", "bciusd", "bcibtc", "mkrusd", "mkrbtc", "mkreth", "venusd", "venbtc", "veneth", "kncusd", "kncbtc", "knceth", "poausd", "poabtc", "poaeth" };
-
-
-            foreach (var symbol in symbols)
+            var mappingcode = MySql.Data.MySqlClient.MySqlHelper.ExecuteDataRow(conStr, "select * from mappingcode")?.Table;
+            var tables = new(string name, KlineInterval[] intervaltype)[]
             {
-                foreach (var interval in intervals)
+                ("dailyline",new KlineInterval[]{KlineInterval.OneDay,KlineInterval.OneWeek,KlineInterval.TwoWeeks,KlineInterval.OneMonth }),
+                ("hourline",new KlineInterval[]{KlineInterval.OneHour,KlineInterval.ThreeHours,KlineInterval.SixHours,KlineInterval.TwelveHours }),
+                ("minuteline",new KlineInterval[]{KlineInterval.OneMinute,KlineInterval.FiveMinutes,KlineInterval.FifteenMinutes,KlineInterval.ThirtyMinutes})
+            };
+
+            //foreach (var table in tables)
+            //{
+            //    using (IDbConnection con = new MySqlConnection(conStr))
+            //    {
+            //        await con.ExecuteAsync($"delete from {table.name}");
+            //        await Console.Out.WriteLineAsync($"delete:{table.name}");
+            //    }
+            //}
+
+            foreach (var table in tables)
+            {
+                foreach (DataRow row in mappingcode.Rows)
                 {
-                    await Console.Out.WriteLineAsync($"start:{symbol} {interval}");
-                    await GetData(symbol, (KlineInterval)interval);
-                    await Console.Out.WriteLineAsync($"end:{symbol} {interval}");
+                    foreach (var interval in table.intervaltype)
+                    {
+                        await Console.Out.WriteLineAsync($"start:{row["internalcode"]} {interval}");
+                        await GetData((string)row["internalcode"], (KlineInterval)interval, table.name);
+                        await Console.Out.WriteLineAsync($"end:{row["internalcode"]} {interval}");
+                    }
                 }
             }
         }
 
-        private static async Task GetData(string symbol,KlineInterval interval)
+        private static async Task GetData(string code, KlineInterval interval, string table)
         {
             using (IDbConnection con = new MySqlConnection(conStr))
             {
+                string symbol = code.Split('.')[0];
+                int lastTimeCount = 0;
+
                 bool flag = true;
-                var dateTime = new DateTime(2014, 1, 1);
+                var dateTime = new DateTime(2010, 1, 1);
+                var intervalint = 0;
+                switch (interval)
+                {
+                    case KlineInterval.OneDay:
+                    case KlineInterval.OneHour:
+                    case KlineInterval.OneMinute:
+                        intervalint = 1;
+                        break;
+                    case KlineInterval.ThreeHours:
+                        intervalint = 3;
+                        break;
+                    case KlineInterval.SixHours:
+                        intervalint = 6;
+                        break;
+                    case KlineInterval.TwelveHours:
+                        intervalint = 12;
+                        break;
+                    case KlineInterval.FiveMinutes:
+                        intervalint = 5;
+                        break;
+                    case KlineInterval.FifteenMinutes:
+                        intervalint = 15;
+                        break;
+                    case KlineInterval.OneWeek:
+                        intervalint = 7;
+                        break;
+                    case KlineInterval.TwoWeeks:
+                        intervalint = 14;
+                        break;
+                    case KlineInterval.ThirtyMinutes:
+                    case KlineInterval.OneMonth:
+                        intervalint = 30;
+                        break;
+                    default:
+                        break;
+                }
 
                 while (flag)
                 {
@@ -58,28 +114,27 @@ namespace DataStorage
 
                         await Console.Out.WriteLineAsync($"Request symbol:{symbol} interval:{interval} start:{dateTime} end:{now}");
                         var result = await bitfinexMethod.GetHistoryKlines(symbol, interval, dateTime, now);
+                        if (result.Count == 0) return;
+
                         result.Sort((x, y) => x.timestamp.CompareTo(y.timestamp));
                         await Console.Out.WriteLineAsync($"Result  symbol:{symbol} interval:{interval} start:{result.FirstOrDefault().timestamp} end:{result.LastOrDefault().timestamp} count:{result.Count}");
 
-                        var re = await con.ExecuteAsync($@"insert into klinedata(symbol,timeframe,timestamp,open,close,high,low,volume) values 
-                                                        ('{symbol}','{interval}',@timestamp,@open,@close,@high,@low,@volume)
+                        var re = await con.ExecuteAsync($@"insert into {table} (`code`,`interval`,time,open,close,high,low,volume) value
+                                                        ('{code}',{intervalint},@timestamp,@open,@close,@high,@low,@volume)
                                                         ON DUPLICATE KEY UPDATE open=@open,close=@close,high=@high,low=@low,volume=@volume", result);
 
+                        if (result.LastOrDefault().timestamp == dateTime)
+                        {
+                            lastTimeCount++;
+                        }
                         dateTime = result.LastOrDefault().timestamp;
 
-                        if (result.Count <= 1)
-                        {
-                            flag = false;
-                        }
+                        if (lastTimeCount > 2) return;
                     }
                     catch (Exception e)
                     {
                         await Console.Out.WriteLineAsync($"Error:{e.Message}");
-                        var err = JArray.Parse(e.Message);
-                        if (err[1].ToString() == "11010")
-                        {
-                            Thread.Sleep(5000);
-                        }
+                        Thread.Sleep(5000);
                     }
                 }
             }
