@@ -161,62 +161,6 @@ namespace DataStorage
             }
         }
 
-        //private static async void RunSocket()
-        //{
-        //    //var mappingcode = MySql.Data.MySqlClient.MySqlHelper.ExecuteDataRow(conStr, "select * from mappingcode limit 1000")?.Table;
-
-        //    //BitfinexStream bitfinexStream = new BitfinexStream("");
-
-        //    //string[] strlst = new string[] { "BTCUSD", "EOSUSD", "ETHUSD", "BCHUSD" };
-        //    ////foreach (DataRow row in mappingcode.Rows)
-        //    //foreach(var symbol in strlst)
-        //    //{
-        //    //    //string symbol = "BTCUSD";//row["internalcode"].ToString().Split('.')[0];
-        //    //    //string symbol = row["internalcode"].ToString().Split('.')[0];
-        //    //    //Thread.Sleep(5000);
-
-        //    //    await Console.Out.WriteLineAsync($"websocket:{symbol}");
-        //    //    await bitfinexStream.RetrieveKline(async (klineInfo) =>
-        //    //    {
-        //    //        var j = JsonConvert.DeserializeObject(klineInfo);
-        //    //        //if( ToString()!="hb")
-        //    //        if (j is JArray)
-        //    //        {
-        //    //            var info = ((JArray)j)[1];
-
-        //    //            switch (info.Count())
-        //    //            {
-        //    //                case 0:
-        //    //                    break;
-        //    //                case 6:
-        //    //                    Console.WriteLine($"{symbol}:{JsonConvert.SerializeObject(j)}");
-        //    //                    break;
-        //    //                default:
-        //    //                    break;
-        //    //            }
-        //    //        }
-        //    //        else if(j is JObject)
-        //    //        {
-        //    //            JObject jObject = (JObject)j;
-        //    //            if (jObject["event"].ToString()== "subscribed")
-        //    //            {
-        //    //                await Console.Out.WriteLineAsync($"event:{jObject["event"]} channel:{jObject["channel"]} chanId:{jObject["chanId"]} key:{jObject["key"]}");
-        //    //            }
-        //    //        }
-        //    //    }, symbol, KlineInterval.OneMinute);
-        //    //}
-
-        //    //BitfinexStream bitfinexStream = new BitfinexStream("");
-        //    //bitfinexStream.RetrieveKline((klineInfo) =>
-        //    //{
-        //    //    Console.WriteLine("BTCUSD:" + klineInfo);
-        //    //}, "BTCUSD", KlineInterval.OneMinute);
-        //    //bitfinexStream.RetrieveKline((klineInfo) =>
-        //    //{
-        //    //    Console.WriteLine("EOSUSD:" + klineInfo);
-        //    //}, "EOSUSD", KlineInterval.OneMinute);
-        //}
-
         private static async Task RunSocket2()
         {
             using (IDbConnection con = new MySqlConnection(conStr))
