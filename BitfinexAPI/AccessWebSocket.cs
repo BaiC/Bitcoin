@@ -11,42 +11,81 @@ namespace BitfinexAPI
 {
     static class AccessWebSocket
     {
-        const string endpointBase = "wss://api.bitfinex.com/ws";
+        const string endpointBase = "wss://api.bitfinex.com/ws/2";
 
-        static Dictionary<string, WebSocket> _socketPool;
+        static Dictionary<int, WebSocket> _socketPool;
+        static int _socketIdCounter;
 
         static AccessWebSocket()
         {
-            _socketPool = new Dictionary<string, WebSocket>();
+            _socketPool = new Dictionary<int, WebSocket>();
+            _socketIdCounter = 0;
         }
 
-        public static string Subscribe<T>(string args, Action<T> handler)
+        public static async Task<int> Subscribe(string args, Action<string> handler)
         {
-            WebSocket ws = new WebSocket(endpointBase + args);
+            WebSocket ws = new WebSocket(endpointBase);
+            ws.SetProxy("http://localhost:1080", null, null);
 
             ws.OnMessage += (sender, message) =>
             {
-                //handler();
+                //handler(ConvertHelper.DataConvert<T>(message.Data));
+                handler(message.Data);
             };
 
             ws.OnError += (sender, error) =>
             {
-                throw new Exception("WebSocketException:" + typeof(T).FullName);
+                throw new Exception("WebSocketException:" + error.Message);
             };
 
-            ws.Connect();
-            ws.Send(args);
+            ws.OnOpen += (sender, e) =>
+            {
+                ws.Send(args);
+            };
 
-            string chanId = "";
-            _socketPool.Add(chanId, ws);
+            ws.ConnectAsync();
 
-            return chanId;
+            _socketPool.Add(++_socketIdCounter, ws);
+
+            return _socketIdCounter;
         }
 
-        public static void Unsubscribe(string chanId)
+        public static async Task<int> Subscribe2(IEnumerable<string> args, Action<string> handler)
         {
-            _socketPool[chanId].Close();
-            _socketPool.Remove(chanId);
+            WebSocket ws = new WebSocket(endpointBase);
+            ws.SetProxy("http://localhost:1080", null, null);
+
+            ws.OnMessage += (sender, message) =>
+            {
+                //handler(ConvertHelper.DataConvert<T>(message.Data));
+                handler(message.Data);
+            };
+
+            ws.OnError += (sender, error) =>
+            {
+                throw new Exception("WebSocketException:" + error.Message);
+            };
+
+            ws.OnOpen += (sender, e) =>
+            {
+                foreach (var item in args)
+                {
+                    Console.WriteLine(item);
+                    ws.Send(item);
+                }
+            };
+
+           ws.ConnectAsync();
+
+            _socketPool.Add(++_socketIdCounter, ws);
+
+            return _socketIdCounter;
+        }
+
+        public static void Unsubscribe(int socketId)
+        {
+            _socketPool[socketId].Close();
+            _socketPool.Remove(socketId);
         }
     }
 }

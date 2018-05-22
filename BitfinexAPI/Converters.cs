@@ -8,6 +8,11 @@ namespace BitfinexAPI
 {
     static class ConvertHelper
     {
+        public static T DataConvert<T>(string data)
+        {
+            return JsonConvert.DeserializeObject<T>(data);
+        }
+
         public static string ObtainEnumValue<T>(T data)
         {
             var info = JsonConvert.SerializeObject(data, new StringEnumConverter());
